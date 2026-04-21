@@ -1,0 +1,8 @@
+node_modules/
+playwright-report/
+test-results/
+.tools/
+playwright/.auth/
+android_app/.gradle/
+android_app/app/build/
+android_app/build/

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/screen_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/uaButton"
+                android:layout_width="64dp"
+                android:layout_height="40dp"
+                android:backgroundTint="@color/brand"
+                android:text="@string/language_ua"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/enButton"
+                android:layout_width="64dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/language_en"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/dashboard_title"
+            android:textColor="@color/ink"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dashboardStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/loading_status"
+            android:textColor="@color/muted_text" />
+
+        <ProgressBar
+            android:id="@+id/dashboardProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/watch_status_card"
+                android:textColor="@color/ink"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/timeValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/day_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/dayValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/date_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/dateValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/battery_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/batteryValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/steps_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/stepsValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/temperature_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/temperatureValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/alarm_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/alarmValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/auth_status_label"
+                android:textColor="@color/muted_text" />
+
+            <TextView
+                android:id="@+id/authValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ink" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/actions_title"
+                android:textColor="@color/ink"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/refreshButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/brand"
+                android:text="@string/refresh_button" />
+
+            <Button
+                android:id="@+id/syncTimeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/brand"
+                android:text="@string/sync_time_button" />
+
+            <EditText
+                android:id="@+id/alarmInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:hint="@string/alarm_hint"
+                android:inputType="time"
+                android:textColor="@color/ink"
+                android:textColorHint="@color/muted_text" />
+
+            <Button
+                android:id="@+id/setAlarmButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/brand"
+                android:text="@string/set_alarm_button" />
+
+            <Button
+                android:id="@+id/lockButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/accent"
+                android:text="@string/lock_button" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

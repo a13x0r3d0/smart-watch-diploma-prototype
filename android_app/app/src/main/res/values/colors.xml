@@ -1,0 +1,7 @@
+<resources>
+    <color name="brand">#0E7490</color>
+    <color name="accent">#C2410C</color>
+    <color name="ink">#102A43</color>
+    <color name="muted_text">#52606D</color>
+    <color name="surface">#F7FAFC</color>
+</resources>
