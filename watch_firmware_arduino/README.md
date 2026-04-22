@@ -2,6 +2,10 @@
 
 `watch_firmware_arduino` is the hardware-ready ESP32/Arduino IDE version of the smartwatch logic. It mirrors the same prototype behavior as the local simulator, but in an Arduino sketch structure using `setup()` and `loop()`.
 
+For full project-level technical documentation, see:
+
+- [docs/TECHNICAL_DOCUMENTATION.md](/Users/a13x0r3d/Documents/New%20project/docs/TECHNICAL_DOCUMENTATION.md)
+
 ## What This Is For
 
 - showing that the project is ready to move from local simulator to hardware

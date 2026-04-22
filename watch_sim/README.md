@@ -2,6 +2,10 @@
 
 `watch_sim` is a local C++ smartwatch simulator that behaves like a simple ESP32-style device. It keeps watch state in memory, shows a terminal-based watch screen, serves a browser-based watch UI, and exposes an HTTP API that the Android emulator can call through the host machine.
 
+For full project-level technical documentation, see:
+
+- [docs/TECHNICAL_DOCUMENTATION.md](/Users/a13x0r3d/Documents/New%20project/docs/TECHNICAL_DOCUMENTATION.md)
+
 ## Features
 
 - Terminal OLED-like screen with four watch screens: main, steps, battery, alarm

@@ -2,6 +2,10 @@
 
 `android_app` is a simple Kotlin Android application that runs in the Android Studio emulator and communicates with the local watch simulator over HTTP.
 
+For full project-level technical documentation, see:
+
+- [docs/TECHNICAL_DOCUMENTATION.md](/Users/a13x0r3d/Documents/New%20project/docs/TECHNICAL_DOCUMENTATION.md)
+
 ## What It Does
 
 - Login screen with PIN authentication
