@@ -2,6 +2,7 @@
 #include <WebServer.h>
 #include <time.h>
 
+// Перелік логічних екранів годинника, близький до того, як це робиться у firmware UI.
 enum ScreenId {
   SCREEN_MAIN,
   SCREEN_STEPS,
@@ -24,6 +25,8 @@ struct WatchState {
   unsigned long lastTemperatureTick = 0;
 };
 
+// Конфігурація мережі та демонстраційних параметрів винесена окремо,
+// щоб у майбутньому її було легко замінити на реальні налаштування пристрою.
 namespace WatchConfig {
   const char* stationSsid = "";
   const char* stationPassword = "";
@@ -35,6 +38,7 @@ namespace WatchConfig {
 WatchState watchState;
 WebServer server(80);
 
+// Повертає текстову назву екрана для API, Serial і web UI.
 String screenName(ScreenId screen) {
   switch (screen) {
     case SCREEN_MAIN: return "Main";
@@ -45,10 +49,12 @@ String screenName(ScreenId screen) {
   return "Main";
 }
 
+// Текстовий статус блокування/розблокування годинника.
 String authLabel() {
   return watchState.authenticated ? "Unlocked" : "Locked";
 }
 
+// Допоміжна навігація між екранами вперед по колу.
 ScreenId nextScreen(ScreenId screen) {
   switch (screen) {
     case SCREEN_MAIN: return SCREEN_STEPS;
@@ -59,6 +65,7 @@ ScreenId nextScreen(ScreenId screen) {
   return SCREEN_MAIN;
 }
 
+// Допоміжна навігація між екранами назад по колу.
 ScreenId prevScreen(ScreenId screen) {
   switch (screen) {
     case SCREEN_MAIN: return SCREEN_ALARM;
@@ -69,6 +76,7 @@ ScreenId prevScreen(ScreenId screen) {
   return SCREEN_MAIN;
 }
 
+// Короткий головний рядок для активного екрана.
 String screenHeadline() {
   switch (watchState.activeScreen) {
     case SCREEN_MAIN:
@@ -83,6 +91,8 @@ String screenHeadline() {
   return "Watch ready";
 }
 
+// Далі йде набір функцій, який стилістично наближає код до OLED/LVGL-підходу:
+// логіка екранів відділена від мережі та стану.
 String renderMainScreen() {
   return "<div class=\"value\">" + screenHeadline() + "</div>";
 }
@@ -113,6 +123,7 @@ int readStepSensorMock() {
   return random(12, 34);
 }
 
+// Mock-функції показують, де в реальному пристрої читались би фізичні сенсори.
 int readTemperatureSensorMock(int currentValue) {
   return constrain(currentValue + random(-1, 2), 18, 30);
 }
@@ -122,6 +133,7 @@ int readBatterySensorMock(int currentValue) {
 }
 
 String htmlPage() {
+  // HTML-сторінка потрібна для локальної демонстрації без фізичного дисплея.
   String page = R"HTML(
 <!doctype html>
 <html lang="en">
@@ -284,6 +296,7 @@ String readBody() {
   return server.arg("plain");
 }
 
+// Дуже простий витяг значення з JSON, достатній для маленьких payload'ів прототипу.
 String jsonValue(const String& body, const String& key) {
   String needle = "\"" + key + "\"";
   int keyPos = body.indexOf(needle);
@@ -295,6 +308,7 @@ String jsonValue(const String& body, const String& key) {
   return body.substring(firstQuote + 1, secondQuote);
 }
 
+// Валідує час у форматі HH:mm перед зміною стану годинника.
 bool validTime(const String& value) {
   if (value.length() != 5 || value.charAt(2) != ':') return false;
   for (int i : {0, 1, 3, 4}) {
@@ -305,6 +319,7 @@ bool validTime(const String& value) {
   return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
 }
 
+// Оновлює календарні поля з поточного системного часу ESP32.
 void updateCalendarFields() {
   time_t now = time(nullptr);
   struct tm* timeInfo = localtime(&now);
@@ -322,6 +337,7 @@ void updateCalendarFields() {
   watchState.currentDate = String(dateBuffer);
 }
 
+// Формує повний JSON-стан годинника для REST API.
 String stateJson() {
   updateCalendarFields();
   String json = "{";
@@ -342,6 +358,8 @@ void sendJson(int code, const String& json) {
   server.send(code, "application/json", json);
 }
 
+// Далі йдуть HTTP-обробники. Вони повторюють той самий контракт,
+// що й локальний watch_sim, щоб mobile app могла працювати однаково з обома версіями.
 void handleRoot() {
   server.send(200, "text/html; charset=utf-8", htmlPage());
 }
@@ -438,6 +456,7 @@ void simulateSensors() {
   }
 }
 
+// Serial Monitor тут виконує роль резервного "екрана" для налагодження firmware.
 void printStatusToSerial() {
   static unsigned long lastPrint = 0;
   if (millis() - lastPrint < 1000) return;
@@ -458,6 +477,7 @@ void printStatusToSerial() {
   Serial.println("OLED Render: " + screenHeadline());
 }
 
+// Піднімає SoftAP і, за потреби, підключення до зовнішньої Wi-Fi мережі.
 void connectNetworking() {
   WiFi.mode(WIFI_AP_STA);
   WiFi.softAP(WatchConfig::softApSsid, WatchConfig::softApPassword);
@@ -470,6 +490,7 @@ void connectNetworking() {
 }
 
 void setup() {
+  // У setup() відбувається одноразова ініціалізація всього "пристрою".
   Serial.begin(115200);
   delay(600);
   randomSeed(micros());
@@ -491,6 +512,7 @@ void setup() {
 }
 
 void loop() {
+  // У loop() постійно підтримується життя пристрою: сенсори, HTTP і логування.
   simulateSensors();
   server.handleClient();
   printStatusToSerial();

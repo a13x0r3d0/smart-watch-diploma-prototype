@@ -26,6 +26,7 @@ constexpr const char* kJsonContentType = "application/json";
 
 bool g_running = true;
 
+// Прибирає зайві пробіли під час ручного розбору HTTP-заголовків.
 std::string trim(const std::string& value) {
     const auto begin = value.find_first_not_of(" \t\r\n");
     if (begin == std::string::npos) {
@@ -35,6 +36,7 @@ std::string trim(const std::string& value) {
     return value.substr(begin, end - begin + 1);
 }
 
+// Переводить рядок у нижній регістр, щоб порівняння заголовків було нечутливим до регістру.
 std::string toLower(std::string value) {
     for (char& ch : value) {
         ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
@@ -42,6 +44,7 @@ std::string toLower(std::string value) {
     return value;
 }
 
+// Дістає Content-Length з "голови" HTTP-запиту, щоб коректно дочитати body.
 std::optional<size_t> parseContentLength(const std::string& requestHead) {
     std::istringstream stream(requestHead);
     std::string line;
@@ -67,6 +70,7 @@ std::optional<size_t> parseContentLength(const std::string& requestHead) {
     return std::nullopt;
 }
 
+// Нормалізує шлях запиту: обрізає повний URL та query-параметри.
 std::string normalizePath(std::string path) {
     const auto schemePos = path.find("://");
     if (schemePos != std::string::npos) {
@@ -82,6 +86,7 @@ std::string normalizePath(std::string path) {
     return path;
 }
 
+// Мінімалістичний парсер JSON-рядків для дуже простих payload'ів прототипу.
 std::optional<std::string> extractJsonString(const std::string& body, const std::string& key) {
     const std::string needle = "\"" + key + "\"";
     const auto keyPos = body.find(needle);
@@ -107,6 +112,7 @@ std::optional<std::string> extractJsonString(const std::string& body, const std:
     return body.substr(firstQuote + 1, secondQuote - firstQuote - 1);
 }
 
+// Генерує HTML/CSS/JS для локального browser UI годинника.
 std::string watchUiHtml() {
     return R"HTML(
 <!doctype html>
@@ -702,6 +708,7 @@ std::string watchUiHtml() {
 )HTML";
 }
 
+// Перевіряє, що час має формат HH:mm і лежить у допустимих межах.
 bool isValidTimeString(const std::string& value) {
     if (value.size() != 5 || value[2] != ':') {
         return false;
@@ -738,6 +745,7 @@ class WatchState {
           lastStepIncrement_(std::chrono::steady_clock::now()),
           lastTemperatureShift_(std::chrono::steady_clock::now()) {}
 
+    // Серіалізує поточний стан годинника у JSON для API та web UI.
     std::string statusJson() {
         std::lock_guard<std::mutex> lock(mutex_);
         std::ostringstream stream;
@@ -755,6 +763,7 @@ class WatchState {
         return stream.str();
     }
 
+    // Змінює стан автентифікації лише якщо PIN збігається з демонстраційним значенням.
     bool authenticate(const std::string& pin) {
         std::lock_guard<std::mutex> lock(mutex_);
         authenticated_ = pin == kValidPin;
@@ -766,6 +775,7 @@ class WatchState {
         return authenticated_;
     }
 
+    // Імітує синхронізацію часу з телефона через зсув від системного часу хоста.
     bool syncTime(const std::string& hhmm) {
         if (!isValidTimeString(hhmm)) {
             return false;
@@ -785,6 +795,7 @@ class WatchState {
         return true;
     }
 
+    // Оновлює час будильника, якщо користувач уже автентифікований.
     bool setAlarm(const std::string& hhmm) {
         if (!isValidTimeString(hhmm)) {
             return false;
@@ -799,12 +810,14 @@ class WatchState {
         return true;
     }
 
+    // Для простоти блокування виражається через прапорець authenticated_.
     bool setLocked(bool locked) {
         std::lock_guard<std::mutex> lock(mutex_);
         authenticated_ = !locked;
         return authenticated_;
     }
 
+    // Перемикання екранів іде по колу, як у простому watch UI.
     void nextScreen() {
         std::lock_guard<std::mutex> lock(mutex_);
         switch (currentScreen_) {
@@ -823,6 +836,7 @@ class WatchState {
         }
     }
 
+    // Зворотне перемикання екранів використовується і термінальним, і web UI.
     void previousScreen() {
         std::lock_guard<std::mutex> lock(mutex_);
         switch (currentScreen_) {
@@ -841,6 +855,7 @@ class WatchState {
         }
     }
 
+    // Оновлює mock-дані: кроки, батарею та температуру.
     void tickSimulation() {
         std::lock_guard<std::mutex> lock(mutex_);
         const auto now = std::chrono::steady_clock::now();
@@ -861,6 +876,7 @@ class WatchState {
         }
     }
 
+    // Малює термінальний OLED-подібний екран для локальної демонстрації без hardware.
     std::string renderScreen() {
         std::lock_guard<std::mutex> lock(mutex_);
         std::ostringstream stream;
@@ -900,12 +916,14 @@ class WatchState {
     }
 
   private:
+    // Загальна функція для випадкових значень у фоновій симуляції.
     int randomInt(int min, int max) {
         static std::mt19937 generator(std::random_device{}());
         std::uniform_int_distribution<int> distribution(min, max);
         return distribution(generator);
     }
 
+    // Формує поточний "час годинника" з урахуванням програмного зсуву.
     std::string currentTimeLocked() const {
         const auto adjusted = std::chrono::system_clock::now() + std::chrono::minutes(timeOffsetMinutes_);
         std::time_t adjustedTime = std::chrono::system_clock::to_time_t(adjusted);
@@ -960,6 +978,7 @@ class WatchState {
     std::chrono::steady_clock::time_point lastTemperatureShift_;
 };
 
+// Формує сирий HTTP-відповідь вручну, без стороннього веб-фреймворка.
 std::string makeHttpResponse(int statusCode,
                              const std::string& statusText,
                              const std::string& body,
@@ -974,6 +993,7 @@ std::string makeHttpResponse(int statusCode,
     return stream.str();
 }
 
+// Центральний роутер API: тут розподіляються всі GET/POST запити симулятора.
 std::string handleRequest(WatchState& watch, const std::string& request) {
     const auto headersEnd = request.find("\r\n\r\n");
     const std::string head = headersEnd == std::string::npos ? request : request.substr(0, headersEnd);
@@ -1072,6 +1092,7 @@ std::string handleRequest(WatchState& watch, const std::string& request) {
     return makeHttpResponse(404, "Not Found", "{\"error\":\"Route not found\"}");
 }
 
+// Простий однопоточний HTTP-сервер на сокетах, достатній для локального демо.
 void serveHttp(WatchState& watch) {
     int serverFd = socket(AF_INET, SOCK_STREAM, 0);
     if (serverFd < 0) {
@@ -1121,6 +1142,7 @@ void serveHttp(WatchState& watch) {
         std::string request;
         char buffer[4096];
         const auto requestStart = std::chrono::steady_clock::now();
+        // Дочитуємо запит доти, доки не отримали всі заголовки та заявлене тіло.
         while (true) {
             const ssize_t received = recv(clientFd, buffer, sizeof(buffer), 0);
             if (received <= 0) {
@@ -1156,6 +1178,7 @@ void serveHttp(WatchState& watch) {
     close(serverFd);
 }
 
+// Обробляє прості клавіші керування для термінального режиму симулятора.
 void keyboardLoop(WatchState& watch) {
     while (g_running) {
         char key = 0;
@@ -1176,6 +1199,7 @@ void keyboardLoop(WatchState& watch) {
     }
 }
 
+// Дозволяє коректно завершити цикл симулятора через Ctrl+C.
 void signalHandler(int) {
     g_running = false;
 }
@@ -1187,10 +1211,12 @@ int main() {
 
     WatchState watch;
 
+    // HTTP-сервер і обробка клавіш винесені в окремі потоки, щоб UI не "заморожувався".
     std::thread serverThread(serveHttp, std::ref(watch));
     std::thread inputThread(keyboardLoop, std::ref(watch));
 
     while (g_running) {
+        // Основний цикл раз на секунду оновлює стан та перемальовує термінальний екран.
         watch.tickSimulation();
         std::cout << watch.renderScreen() << std::flush;
         std::this_thread::sleep_for(std::chrono::seconds(1));

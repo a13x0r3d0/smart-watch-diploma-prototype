@@ -1,5 +1,6 @@
 package com.example.smartwatchdemo
 
+// DTO-модель стану годинника, яку Android отримує з локального HTTP API.
 data class WatchStatus(
     val time: String,
     val day: String,

@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.util.concurrent.Executors
 
+// Перший екран застосунку: відповідає тільки за PIN-автентифікацію та вибір мови.
 class LoginActivity : AppCompatActivity() {
     private val executor = Executors.newSingleThreadExecutor()
 
@@ -39,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // Блокуємо кнопку на час запиту, щоб уникнути дубльованих POST /auth.
             progressBar.visibility = View.VISIBLE
             loginButton.isEnabled = false
             statusText.text = getString(R.string.authenticating)
@@ -65,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // Налаштовує простий двомовний перемикач без окремого settings-екрана.
     private fun setupLanguageSwitcher(uaButton: Button, enButton: Button) {
         updateLanguageButtons(uaButton, enButton)
 
@@ -77,6 +80,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // Якщо мова не змінюється, recreate() не викликаємо зайвий раз.
     private fun switchLanguageIfNeeded(language: String) {
         if (LocaleHelper.getSavedLanguage(this) == language) {
             return
@@ -86,6 +90,7 @@ class LoginActivity : AppCompatActivity() {
         recreate()
     }
 
+    // Візуально підсвічує активну мову для зрозумілості користувачу.
     private fun updateLanguageButtons(uaButton: Button, enButton: Button) {
         val selectedLanguage = LocaleHelper.getSavedLanguage(this)
         val activeColor = getColor(R.color.brand)

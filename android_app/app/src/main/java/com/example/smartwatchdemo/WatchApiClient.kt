@@ -7,15 +7,18 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
+// Єдина точка доступу до локального API годинника з Android-застосунку.
 object WatchApiClient {
     private const val BASE_URL = "http://10.0.2.2:8080"
 
+    // Уніфікований результат сирого HTTP-запиту до симулятора/годинника.
     data class ApiResult(
         val success: Boolean,
         val code: Int,
         val body: String
     )
 
+    // Завантажує повний стан годинника для dashboard-екрана.
     fun getStatus(): Result<WatchStatus> {
         return runCatching {
             val response = request("GET", "/status")
@@ -37,6 +40,7 @@ object WatchApiClient {
         }
     }
 
+    // Виконує автентифікацію PIN-кодом. 401 тут не вважається аварією мережі.
     fun authenticate(pin: String): Result<Boolean> {
         return runCatching {
             val payload = JSONObject().put("pin", pin).toString()
@@ -51,6 +55,7 @@ object WatchApiClient {
         }
     }
 
+    // Синхронізація часу винесена в окремий endpoint, як і на боці watch_sim.
     fun syncTime(time: String): Result<Unit> = postTime("/sync-time", time)
 
     fun setAlarm(time: String): Result<Unit> = postTime("/alarm", time)
@@ -66,6 +71,7 @@ object WatchApiClient {
         }
     }
 
+    // Спільна допоміжна функція для POST-запитів з полем time.
     private fun postTime(path: String, time: String): Result<Unit> {
         return runCatching {
             val payload = JSONObject().put("time", time).toString()
@@ -76,6 +82,7 @@ object WatchApiClient {
         }
     }
 
+    // Низькорівневий HTTP-клієнт на HttpURLConnection без сторонніх бібліотек.
     private fun request(method: String, path: String, body: String? = null): ApiResult {
         val connection = (URL(BASE_URL + path).openConnection() as HttpURLConnection).apply {
             requestMethod = method
@@ -105,6 +112,7 @@ object WatchApiClient {
         return ApiResult(success = code in 200..299, code = code, body = responseBody)
     }
 
+    // Повертає зрозумілий текст помилки, якщо сервер віддав JSON з полем error.
     private fun parseError(body: String): String {
         return runCatching {
             JSONObject(body).optString("error", "Request failed")

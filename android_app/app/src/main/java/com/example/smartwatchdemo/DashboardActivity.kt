@@ -21,6 +21,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.Executors
 
+// Основний екран керування годинником після успішної автентифікації.
 class DashboardActivity : AppCompatActivity() {
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var timeValue: TextView
@@ -66,6 +67,7 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.syncTimeButton).setOnClickListener {
+            // Для прототипу телефон вважається джерелом "правильного" часу.
             val now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
             runRequest(
                 loadingMessage = getString(R.string.syncing_time),
@@ -109,6 +111,7 @@ class DashboardActivity : AppCompatActivity() {
         refreshStatus()
     }
 
+    // Повторює ту саму модель локалізації, що й LoginActivity, для послідовного UX.
     private fun setupLanguageSwitcher(uaButton: Button, enButton: Button) {
         updateLanguageButtons(uaButton, enButton)
 
@@ -143,6 +146,7 @@ class DashboardActivity : AppCompatActivity() {
         enButton.setTextColor(if (selectedLanguage == "en") activeTextColor else inactiveTextColor)
     }
 
+    // Перечитує поточний стан годинника з backend-а й оновлює dashboard.
     private fun refreshStatus() {
         runRequest(
             loadingMessage = getString(R.string.loading_status),
@@ -154,6 +158,7 @@ class DashboardActivity : AppCompatActivity() {
         )
     }
 
+    // Прив'язує дані моделі до текстових полів інтерфейсу.
     private fun bindStatus(status: WatchStatus) {
         timeValue.text = status.time
         dayValue.text = status.day
@@ -168,12 +173,14 @@ class DashboardActivity : AppCompatActivity() {
             statusText.text = getString(R.string.auth_required)
         }
 
+        // Простий сценарій "alarm reached": якщо час збігся з alarm, показуємо notification.
         if (status.time == status.alarm && lastAlarmNotified != status.alarm) {
             showAlarmNotification(status.alarm)
             lastAlarmNotified = status.alarm
         }
     }
 
+    // Універсальна обгортка для фонових HTTP-запитів з індикатором прогресу.
     private fun <T> runRequest(
         loadingMessage: String,
         action: () -> Result<T>,
@@ -196,6 +203,7 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    // Локальне повідомлення робить демо більш "живим", навіть без реального годинника.
     private fun showAlarmNotification(alarm: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -211,6 +219,7 @@ class DashboardActivity : AppCompatActivity() {
         NotificationManagerCompat.from(this).notify(1001, builder.build())
     }
 
+    // Android 8+ вимагає channel для показу будь-яких notification.
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
