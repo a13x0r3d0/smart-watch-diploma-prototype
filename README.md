@@ -14,6 +14,7 @@ The prototype is intentionally local-first and demo-friendly:
 For a detailed technical description of the project, see:
 
 - [docs/TECHNICAL_DOCUMENTATION.md](/Users/a13x0r3d/Documents/New%20project/docs/TECHNICAL_DOCUMENTATION.md)
+- [docs/GRAPHICAL_MATERIALS.md](/Users/a13x0r3d/Documents/New%20project/docs/GRAPHICAL_MATERIALS.md)
 
 ## Architecture
 
